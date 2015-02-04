@@ -12,7 +12,6 @@ cgitb.enable()
 form = cgi.FieldStorage()
 
 print '<html><body>'
-
 saveDir = os.getenv('OPENSHIFT_DATA_DIR')
 readDir = 'data'
 

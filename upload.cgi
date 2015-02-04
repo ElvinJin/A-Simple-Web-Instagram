@@ -11,8 +11,18 @@ cgitb.enable()
 
 form = cgi.FieldStorage()
 
-print '<html><body>'
-saveDir = os.getenv('OPENSHIFT_DATA_DIR')
+print '<html><head>'
+print '''<title>Elvin's Web Instagram</title>
+		<!-- Bootstrap core CSS -->
+    	<link href="css/bootstrap.min.css" rel="stylesheet">
+    	<!-- Bootstrap theme -->
+    	<link href="css/bootstrap-theme.min.css" rel="stylesheet">'''
+print '</head>'
+print '<body>'
+
+# saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
+saveDir = 'openshift_data_dir' # Test
+
 readDir = 'data'
 
 if ('pic' not in form):
@@ -29,6 +39,7 @@ else:
 
     open(savePath, 'wb').write(fileitem.file.read())
 
-    print 'File uploaded. <br /><img src="%s" />'%(os.path.join('data', fn + ext))
+    # print 'File uploaded. <br /><img src="%s" />'%(os.path.join(readDir, fn + ext)) # Deploy
+    print 'File uploaded. <br /><img src="%s" />'%(os.path.join(saveDir, fn + ext)) # Test
 
 print '</body></html>'

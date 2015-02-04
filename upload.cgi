@@ -20,8 +20,8 @@ print '''<title>Elvin's Web Instagram</title>
 print '</head>'
 print '<body>'
 
-# saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
-saveDir = 'openshift_data_dir' # Test
+saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
+# saveDir = 'openshift_data_dir' # Test
 
 readDir = 'data'
 
@@ -39,7 +39,7 @@ else:
 
     open(savePath, 'wb').write(fileitem.file.read())
 
-    # print 'File uploaded. <br /><img src="%s" />'%(os.path.join(readDir, fn + ext)) # Deploy
-    print 'File uploaded. <br /><img src="%s" />'%(os.path.join(saveDir, fn + ext)) # Test
+    print 'File uploaded. <br /><img src="%s" />'%(os.path.join(readDir, fn + ext)) # Deploy
+    # print 'File uploaded. <br /><img src="%s" />'%(os.path.join(saveDir, fn + ext)) # Test
 
 print '</body></html>'

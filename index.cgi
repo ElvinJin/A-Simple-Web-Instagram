@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import cgi
+
 print 'Content-type: text/html'
 print
 
@@ -13,13 +15,29 @@ print '''<title>Elvin\'s Web Instagram</title>
     	<link href="css/main.css" rel="stylesheet">'''
 print '</head>'
 
-print """<body><div class="container">
+print '<body><div class="container">'
 
-    <div class="header">
+form = cgi.FieldStorage()
+err = form.getvalue('err')
+if err == '1':
+	print '''<div class="alert alert-danger" role="alert">
+			  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			  <span class="sr-only">Error:</span>
+			  No file uploaded
+			</div>'''
+elif err == '2': 
+	print '''<div class="alert alert-danger" role="alert">
+			  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			  <span class="sr-only">Error:</span>
+			  No file selected
+			</div>'''
+			
+print '''<div class="header">
     	<h3 class="text-muted ">Elvin's Web Instagram</h3>
     	<button type="button" class="btn btn-info">Resume</button>
-    </div>
-	<form enctype="multipart/form-data" action="upload.cgi" method="POST">
+    	</div>'''
+
+print '''<form enctype="multipart/form-data" action="upload.cgi" method="POST">
 		<div class="row">
 			<div class="col-lg-6 col-sm-6 col-12">
 		        <h4>Choose an image (.jpg .gif .png): </h4>
@@ -27,6 +45,6 @@ print """<body><div class="container">
 		    </div>
 		</div>
 	    <button type="submit" class="btn btn-primary">Upload</button>
-	</form>
-</div></body>"""
+		</form>'''
+print '</div></body>'
 print "</html>"

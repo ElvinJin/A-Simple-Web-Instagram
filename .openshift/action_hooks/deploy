@@ -1,3 +1,4 @@
 echo ">> Running deploy script <<"
 ln -s ${OPENSHIFT_DATA_DIR} ${OPENSHIFT_REPO_DIR}/data
+ln -s ${OPENSHIFT_TMP_DIR} ${OPENSHIFT_REPO_DIR}/tmp
 echo ">> Deploy script done <<"

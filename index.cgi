@@ -10,9 +10,7 @@ print '''<title>Elvin\'s Web Instagram</title>
 		<!-- Bootstrap core CSS -->
     	<link href="css/bootstrap.min.css" rel="stylesheet">
     	<!-- Bootstrap theme -->
-    	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
-    	<!-- Custom theme -->
-    	<link href="css/main.css" rel="stylesheet">'''
+    	<link href="css/bootstrap-theme.min.css" rel="stylesheet">'''
 print '</head>'
 
 print '<body><div class="container">'
@@ -31,7 +29,13 @@ elif err == '2':
 			  <span class="sr-only">Error:</span>
 			  No file selected
 			</div>'''
-			
+elif err == '3':
+	print '''<div class="alert alert-danger" role="alert">
+			  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			  <span class="sr-only">Error:</span>
+			  File extension doesn't match your file format
+			</div>'''
+
 print '''<div class="header">
     	<h3 class="text-muted ">Elvin's Web Instagram</h3>
     	<button type="button" class="btn btn-info">Resume</button>

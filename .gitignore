@@ -1,2 +1,3 @@
 openshift_data_dir/
 openshift_tmp_dir/
+test_images/

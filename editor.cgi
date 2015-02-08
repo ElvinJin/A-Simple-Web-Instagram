@@ -13,12 +13,12 @@ original_fn = form.getvalue('original_fn')
 (fn, ext) = os.path.splitext(os.path.basename(original_fn))
 filename = form.getvalue('fn')
 
-tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-# tmpDir = 'openshift_tmp_dir' # Test
+# tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
+tmpDir = 'openshift_tmp_dir' # Test
 tmpPath = os.path.join(tmpDir, filename + ext)
 
-saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
-# saveDir = 'openshift_data_dir' # Test
+# saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
+saveDir = 'openshift_data_dir' # Test
 savePath = os.path.join(saveDir, filename + ext)
 
 # shutil.move(tmpPath, savePath)

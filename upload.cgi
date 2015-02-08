@@ -12,8 +12,8 @@ import shutil
 cgitb.enable()
 form = cgi.FieldStorage()
 
-tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-# tmpDir = 'openshift_tmp_dir' # Test
+# tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
+tmpDir = 'openshift_tmp_dir' # Test
 
 print "Content-Type: text/html"
 if ('pic' not in form):
@@ -32,8 +32,7 @@ else:
 	tmpPath = os.path.join(tmpDir, randomFileName + ext)
 	open(tmpPath, 'wb').write(fileitem.file.read())
 
-	cmd = ['identify', tmpPath] # Deploy
-	# cmd = ['/usr/local/bin/identify', tmpPath] # Test
+	cmd = ['identify', tmpPath]
 
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()

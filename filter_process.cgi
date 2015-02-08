@@ -14,8 +14,8 @@ original_fn = form.getvalue('original_fn')
 (fn, ext) = os.path.splitext(os.path.basename(original_fn))
 filename = form.getvalue('fn')
 
-tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-# tmpDir = 'openshift_tmp_dir' # Test
+# tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
+tmpDir = 'openshift_tmp_dir' # Test
 tmpPath1 = os.path.join(tmpDir, filename + ext)
 
 randomFileName = ''.join(random.choice(string.ascii_lowercase) for i in xrange(1,10))
@@ -24,8 +24,7 @@ tmpPath2 = os.path.join(tmpDir, randomFileName + ext)
 action = form['action'].value
 
 def get_image_dimension(origin):
-	cmd = ['identify', origin] # Deploy
-	# cmd = ['/usr/local/bin/identify', origin] # Test
+	cmd = ['identify', origin]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
 	dimension = out.split()[2].split('x')
@@ -33,53 +32,48 @@ def get_image_dimension(origin):
 	return (dimension[0], dimension[1])
 
 def convert_border(origin, destination):
-	cmd = ['convert', origin, '-bordercolor', 'black', '-border', '15', destination] # Deploy
-	# cmd = ['/usr/local/bin/convert', origin, '-bordercolor', 'black', '-border', '15', destination] # Test
+	cmd = ['convert', origin, '-bordercolor', 'black', '-border', '15', destination]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
 
 def convert_lomo(origin, destination):
-	cmd = ['convert', origin, '-channel', 'R', '-level', '33%', '-channel', 'G', '-level', '33%', destination] # Deploy
-	# cmd = ['/usr/local/bin/convert', origin, '-channel', 'R', '-level', '33%', '-channel', 'G', '-level', '33%', destination] # Test
+	cmd = ['convert', origin, '-channel', 'R', '-level', '33%', '-channel', 'G', '-level', '33%', destination]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
 
 def convert_lens_flare(origin, destination):
 	(width, height) = get_image_dimension(origin)
 
-	cmd = ['convert', 'assets/lensflare.png', '-resize', width+'x', 'tmp.png'] # deploy
-	# cmd = ['/usr/local/bin/convert', 'assets/lensflare.png', '-resize', width+'x', 'tmp.png'] # Test
+	cmd = ['convert', 'assets/lensflare.png', '-resize', width+'x', 'tmp.png']
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
 
-	cmd = ['composite', '-compose', 'screen', '-gravity', 'northwest', 'tmp.png', origin, destination] # Deploy
-	# cmd = ['/usr/local/bin/composite', '-compose', 'screen', '-gravity', 'northwest', 'tmp.png', origin, destination] # Test
+	cmd = ['composite', '-compose', 'screen', '-gravity', 'northwest', 'tmp.png', origin, destination]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
 
 def convert_black_and_white(origin, destination):
 	(width, height) = get_image_dimension(origin)
 
-	cmd = ['convert', origin, '-type', 'grayscale', 'tmp'] # Deploy
-	# cmd = ['/usr/local/bin/convert', origin, '-type', 'grayscale', 'item'] # Test
+	cmd = ['convert', origin, '-type', 'grayscale', 'item']
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
 
-	cmd = ['convert', 'assets/bwgrad.png', '-resize', width+'x'+height+'\!', 'tmp.png'] # Deploy
-	# cmd = ['/usr/local/bin/convert', 'assets/bwgrad.png', '-resize', width+'x'+height+'\!', 'tmp.png'] # Test
+	cmd = ['convert', 'assets/bwgrad.png', '-resize', width+'x'+height+'!', 'tmp.png']
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
 
-	cmd = ['composite', '-compose', 'softlight', '-gravity', 'center', 'tmp.png', 'item', destination] # Deploy
-	# cmd = ['/usr/local/bin/composite', '-compose', 'softlight', '-gravity', 'center', 'tmp.png', 'item', destination] # Test
+	cmd = ['composite', '-compose', 'softlight', '-gravity', 'center', 'tmp.png', 'item', destination]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
+
+	os.remove('item')
+	os.remove('tmp.png')
 
 def convert_blur(origin, destination):
 	(width, height) = get_image_dimension(origin)
 	blur_level = min(float(width), float(height))/300.0
-	cmd = ['convert', origin, '-blur', '%fx%f'%(blur_level,blur_level), destination] # Deploy
-	# cmd = ['/usr/local/bin/convert', origin, '-blur', '%fx%f'%(blur_level,blur_level), destination] # Test
+	cmd = ['convert', origin, '-blur', '%fx%f'%(blur_level,blur_level), destination]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
 
@@ -87,13 +81,11 @@ def add_annotate(origin, destination, position, message, font, font_size):
 	if font == "Times":
 		font = "Times-Roman"
 	if position == 'top':
-		cmd = ['convert', origin, '-background', 'black', '-fill', 'white', '-pointsize', font_size, '-font', font, 'label:%s'%message, '+swap', '-gravity', 'center', '-append', destination] # Deploy
-		# cmd = ['/usr/local/bin/convert', origin, '-background', 'black', '-fill', 'white', '-pointsize', font_size, '-font', font, 'label:%s'%message, '+swap', '-gravity', 'center', '-append', destination] # Test
+		cmd = ['convert', origin, '-background', 'black', '-fill', 'white', '-pointsize', font_size, '-font', font, 'label:%s'%message, '+swap', '-gravity', 'center', '-append', destination]
 		p = subprocess.Popen(cmd)
 		(out, err) = p.communicate()
 	else:
-		cmd = ['convert', origin, '-background', 'black', '-fill', 'white', '-font', font, '-pointsize', font_size, 'label:%s'%message, '-gravity', 'center', '-append', destination] # Deploy
-		# cmd = ['/usr/local/bin/convert', origin, '-background', 'black', '-fill', 'white', '-font', font, '-pointsize', font_size, 'label:%s'%message, '-gravity', 'center', '-append', destination] # Test
+		cmd = ['convert', origin, '-background', 'black', '-fill', 'white', '-font', font, '-pointsize', font_size, 'label:%s'%message, '-gravity', 'center', '-append', destination]
 		p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		(out, err) = p.communicate()
 

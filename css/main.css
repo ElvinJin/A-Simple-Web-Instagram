@@ -32,7 +32,8 @@
 }
 
 .thumbnail {
-	height: 200px;
+	max-width: 200px;
+	max-height: 200px;
 	margin: 20px auto;
 	img {
 		border-top: 8px solid $yellow; 
@@ -46,6 +47,10 @@
 		width: 80%;
 		margin: 40px auto;
 	}
+}
+
+.photo-space {
+	height: 200px;
 }
 
 #image-selection {

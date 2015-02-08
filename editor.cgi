@@ -4,26 +4,53 @@ import cgi
 import cgitb
 import os
 import shutil
+import Cookie
+import time
+import random
+import db
 
 cgitb.enable()
 form = cgi.FieldStorage()
 
+try: 
+    cookieDict = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
+except KeyError: 
+    cookieDict = Cookie.SimpleCookie()
+
+try: 
+    sessionValue = cookieDict['session'].value
+except KeyError: 
+    sessionValue = form.getvalue('tmp_id')
+
+if sessionValue == None:
+	print "Status: 301"
+	print "Location: /index.cgi"
+	print
+
+expireTimestamp = time.time() + 1 * 24 * 60 * 60
+expireTime = time.strftime("%a, %d-%b-%Y %T GMT", time.gmtime(expireTimestamp))
+
+cookieDict['session'] = sessionValue
+cookieDict['session']['expires'] = expireTime
+
+progress = db.get_newest_progress(sessionValue)
+if progress == None:
+	print "Status: 301"
+	print "Location: /index.cgi"
+	print
+
 err = form.getvalue('err')
-original_fn = form.getvalue('original_fn')
-(fn, ext) = os.path.splitext(os.path.basename(original_fn))
-filename = form.getvalue('fn')
+filename = progress[2]
+fn = progress[3]
+ext = progress[4]
+original_fn = fn+ext
 
 # tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
 tmpDir = 'openshift_tmp_dir' # Test
 tmpPath = os.path.join(tmpDir, filename + ext)
 
-# saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
-saveDir = 'openshift_data_dir' # Test
-savePath = os.path.join(saveDir, filename + ext)
-
-# shutil.move(tmpPath, savePath)
-
 print "Content-Type: text/html"
+print cookieDict
 print
 
 print '<html><head>'
@@ -45,7 +72,7 @@ print '''<div class="inspector col-md-4">
             	<h3 class="panel-title">Filter</h3>
             </div>
             <div class="panel-body">'''
-print 			'<form method="POST" action="filter_process.cgi?fn=%s&original_fn=%s">' % (filename, original_fn)
+print 			'<form method="POST" action="filter_process.cgi?sid=%s">' % sessionValue
 print '''			<div class="row">
 				    <input class="btn btn-info filter-btn" type="submit" name="action" value="Border" />
 				    <input class="btn btn-info filter-btn" type="submit" name="action" value="Lomo" />
@@ -61,7 +88,7 @@ print '''			<div class="row">
             	<h3 class="panel-title">Annotate</h3>
             </div>
             <div class="panel-body">'''
-print 			'<form method="POST" action="filter_process.cgi?fn=%s&original_fn=%s">' % (filename, original_fn)
+print 			'<form method="POST" action="filter_process.cgi?sid=%s">' % sessionValue
 print '''			<div class="row">
 			    		<input class="form-control panel-input-text" type="text" name="msg" placeholder="Message" />
 		    		</div>'''
@@ -131,10 +158,10 @@ print		    	'''<div class="row panel-selection">
 			  	</form>
             </div>
         </div>
-        <div class="page-header"></div>
+        <div class="page-header"></div>'''
         
-			<form method="POST" action="edit_decision.cgi">
-				<div class="row">
+print		'<form method="POST" action="edit_decision.cgi?sid=%s">' % sessionValue
+print			'''<div class="row">
 			    <input class="col-md-3 btn btn-warning dicision-btn" type="submit" name="action" value="Undo" />
 			    <input class="col-md-3 btn btn-danger dicision-btn" type="submit" name="action" value="Discard" />
 			    <input class="col-md-3 btn btn-success dicision-btn" type="submit" name="action" value="Finish" />

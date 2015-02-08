@@ -6,13 +6,25 @@ import os
 import random
 import string
 import subprocess
+import db
+import time
 
 cgitb.enable()
 form = cgi.FieldStorage()
 
-original_fn = form.getvalue('original_fn')
-(fn, ext) = os.path.splitext(os.path.basename(original_fn))
-filename = form.getvalue('fn')
+sessionValue = form.getvalue('sid')
+nowTime = time.time()
+
+progress = db.get_newest_progress(sessionValue)
+if progress == None:
+	print "Status: 301"
+	print "Location: /index.cgi"
+	print
+
+filename = progress[2]
+fn = progress[3]
+ext = progress[4]
+original_fn = fn+ext
 
 # tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
 tmpDir = 'openshift_tmp_dir' # Test
@@ -51,6 +63,8 @@ def convert_lens_flare(origin, destination):
 	cmd = ['composite', '-compose', 'screen', '-gravity', 'northwest', 'tmp.png', origin, destination]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
+
+	os.remove('tmp.png')
 
 def convert_black_and_white(origin, destination):
 	(width, height) = get_image_dimension(origin)
@@ -91,14 +105,19 @@ def add_annotate(origin, destination, position, message, font, font_size):
 
 if action == 'Border':
 	convert_border(tmpPath1, tmpPath2)
+	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 elif action == 'Lomo':
 	convert_lomo(tmpPath1, tmpPath2)
+	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 elif action == 'Lens Flare':
 	convert_lens_flare(tmpPath1, tmpPath2)
+	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 elif action == 'Black White':
 	convert_black_and_white(tmpPath1, tmpPath2)
+	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 elif action == 'Blur':
 	convert_blur(tmpPath1, tmpPath2)
+	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 elif action == 'Annotate Top':
 	msg = form.getvalue('msg')
 	if (not msg) or msg == '':
@@ -116,6 +135,7 @@ elif action == 'Annotate Top':
 	   font_size = "20"
 
 	add_annotate(tmpPath1, tmpPath2, "top", msg, font, font_size)
+	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 elif action == 'Annotate Bottom':
 	msg = form.getvalue('msg')
 	if (not msg) or msg == '':
@@ -133,8 +153,9 @@ elif action == 'Annotate Bottom':
 	   font_size = "20"
 
 	add_annotate(tmpPath1, tmpPath2, "bottom", msg, font, font_size)
+	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 
 print "Content-Type: text/html"
 print "Status: 302"
-print "Location: /editor.cgi?fn=%s&original_fn=%s" % (randomFileName, original_fn)
+print "Location: /editor.cgi"
 print

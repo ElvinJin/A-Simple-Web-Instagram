@@ -29,7 +29,7 @@ def finish(session_id, modified_time, new_name, original_name, extension):
 	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
 	cursor = conn.cursor()
 
-	query = 'INSERT INTO tmp_progress(session_id, modified_time, new_name, original_name, extension) VALUES (%s, %s, %s, %s, %s)'
+	query = 'INSERT INTO gallery(session_id, modified_time, new_name, original_name, extension) VALUES (%s, %s, %s, %s, %s)'
 
 	cursor.execute(query, [session_id, modified_time, new_name, original_name, extension])
 	conn.commit()
@@ -91,3 +91,32 @@ def is_resumable(session_id):
 		return False
 	else:
 		return True
+
+def get_number_of_photos():
+	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
+	cursor = conn.cursor()
+
+	query = 'SELECT COUNT(*) FROM gallery'
+
+	cursor.execute(query)
+	result = cursor.fetchone()
+	num_of_rows = result[0]
+
+	cursor.close()
+	conn.close()
+	return num_of_rows
+
+def get_photo(page):
+	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
+	cursor = conn.cursor()
+
+	offset = (int(page) - 1) * 8
+	query = 'SELECT * FROM gallery ORDER BY modified_time DESC LIMIT 8 OFFSET %s' % offset
+	cursor.execute(query)
+
+	photos = cursor.fetchall()
+
+	cursor.close()
+	conn.close()
+
+	return photos

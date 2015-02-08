@@ -8,6 +8,21 @@ import string
 import random
 import subprocess
 import shutil
+import db
+import Cookie
+import time
+
+def discard(sid):
+	allProgress = db.get_progress(sid)
+	if allProgress != None:
+		db.discard(sid)
+
+		for progress in allProgress:
+			deletePath = os.path.join(tmpDir, progress[2]+progress[4])
+			try:
+				os.remove(deletePath)
+			except OSError:
+				pass
 
 cgitb.enable()
 form = cgi.FieldStorage()
@@ -39,10 +54,29 @@ else:
 	identifyResult = out.split()
 	fileFormat = identifyResult[1]
 	if not ((re.search(".jpg$", fileitem.filename) and fileFormat == "JPEG") or (re.search(".png$", fileitem.filename) and fileFormat == "PNG") or (re.search(".gif$", fileitem.filename) and fileFormat == "GIF")):
+		os.remove(tmpPath)
 		print "Status: 301 No file selected"
 		print "Location: /index.cgi?err=3" # no file selected
 		print
 	else:
-		print "Status: 302"
-		print "Location: /editor.cgi?fn=%s&original_fn=%s" % (randomFileName, fileitem.filename)
-		print
+		nowTime = time.time()
+		try: 
+		    cookieDict = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
+		except KeyError: 
+		    cookieDict = Cookie.SimpleCookie()
+
+		try: 
+			sessionValue = cookieDict['session'].value
+			discard(sessionValue)
+			db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
+			print "Status: 302"
+			print "Location: /editor.cgi"
+			print
+		except KeyError: 
+			sessionValue = random.randint(0, 100000)
+			discard(sessionValue)
+			db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
+			print "Status: 302"
+			print "Location: /editor.cgi?tmp_id=%s" % sessionValue
+			print
+

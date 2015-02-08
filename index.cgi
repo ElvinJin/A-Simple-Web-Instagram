@@ -5,7 +5,12 @@ import os
 import Cookie
 import time
 import random
-# import db
+import db
+
+form = cgi.FieldStorage()
+
+# saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
+saveDir = 'openshift_data_dir' # Test
 
 try: 
     cookieDict = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
@@ -32,14 +37,6 @@ print 'Content-type: text/html'
 print cookieDict
 print
 
-print 'Cookie is set! \nNew session value = %s (Expire on %s)' % (sessionValue, expireTime)
-if (oldSession != None): 
-    print 'Old sesion exist. Value: %s' % (oldSession)
-else: 
-    print 'No old session exist. '
-
-print "expireTimestamp: " + str(expireTimestamp)
-print "expireTime:      " + str(expireTime)
 print '<html><head>'
 print '''<title>Elvin\'s Web Instagram</title>
 		<!-- Bootstrap core CSS -->
@@ -52,7 +49,6 @@ print '</head>'
 
 print '<body><div class="container">'
 
-form = cgi.FieldStorage()
 err = form.getvalue('err')
 if err == '1':
 	print '''<div class="alert alert-danger" role="alert">
@@ -73,15 +69,38 @@ elif err == '3':
 			  File extension doesn't match your file format
 			</div>'''
 
-print '''<div class="header row">
-    	<h3 class="text-muted col-md-4" id="web-name">Elvin's Web Instagram</h3>
-    	<button type="button" class="btn btn-info" id="resume">Resume</button>
-    	</div>'''
+print '''<div class="row">
+    	<h3 class="text-muted col-xs-4" id="web-name">Elvin's Web Instagram</h3>'''
+print '<div class="col-xs-2">'
+if db.is_resumable(sessionValue):
+	print '''<form action="editor.cgi" method="POST">
+			<button type="submit" class="btn btn-info" id="resume">Resume</button>
+			</form>'''
+else:
+	print '<button type="button" class="btn btn-info" id="resume" disabled>Resume</button>'
+print '</div></div>'
+
+num_of_rows = db.get_number_of_photos()
+num_of_pages = (num_of_rows + 7) / 8
+if num_of_pages == 0:
+	num_of_pages = 1
+
+current_page = form.getvalue('page')
+if current_page == None:
+	current_page = 1;
+
+photos = db.get_photo(current_page)
+
 print '<div class="gallery row">'
-for x in xrange(0,8):
-	print '''<div class="col-md-3">
-				<div class="thumbnail"></div>
-			</div>'''
+for photo in photos:
+	alt_txt = photo[3] + photo[4]
+	ext = photo[4]
+	filename = photo[2]
+	imagePath = os.path.join(saveDir, filename + ext)
+	thumbPath = os.path.join(saveDir, filename + '_thumb' + ext)
+	print '<div class="col-xs-3 photo-space"><a href="%s" target="_blank">' % imagePath
+	print '<img class="thumbnail" alt="%s" src="%s">' % (alt_txt, thumbPath)
+	print '</a></div>'
 print '</div>'
 print '''<form enctype="multipart/form-data" action="upload.cgi" method="POST">
 		<div class="row" id="image-selection">

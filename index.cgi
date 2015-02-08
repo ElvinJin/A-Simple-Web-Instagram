@@ -9,8 +9,8 @@ import db
 
 form = cgi.FieldStorage()
 
-# saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
-saveDir = 'openshift_data_dir' # Test
+saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
+# saveDir = 'openshift_data_dir' # Test
 
 try: 
     cookieDict = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
@@ -85,9 +85,7 @@ num_of_pages = (num_of_rows + 7) / 8
 if num_of_pages == 0:
 	num_of_pages = 1
 
-current_page = form.getvalue('page')
-if current_page == None:
-	current_page = 1;
+current_page = int(form.getvalue('page', 1))
 
 photos = db.get_photo(current_page)
 
@@ -102,6 +100,39 @@ for photo in photos:
 	print '<img class="thumbnail" alt="%s" src="%s">' % (alt_txt, thumbPath)
 	print '</a></div>'
 print '</div>'
+
+print '<div class="row text-center"><ul class="pagination">'
+if current_page == 1:
+	print '<li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'
+else:
+	pre_page = current_page - 1
+	print '<li><a href="/index.cgi?page=%s" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>' % pre_page
+
+if num_of_pages <= 5:
+	for x in xrange(1,num_of_pages+1):
+		if x == current_page:
+			print '<li class="active"><a href="/index.cgi?page=%s">%s <span class="sr-only">(current)</span></a></li>' % (x, x)
+		else:
+			print '<li><a href="/index.cgi?page=%s">%s <span class="sr-only">(current)</span></a></li>' % (x, x)
+else:
+	start = current_page - 2
+	while start < 1:
+		++start
+	for x in xrange(0, 5):
+		index = start+x
+		if index == current_page:
+			print '<li class="active"><a href="/index.cgi?page=%s">%s <span class="sr-only">(current)</span></a></li>' % (index, index)
+		else:
+			print '<li><a href="/index.cgi?page=%s">%s <span class="sr-only">(current)</span></a></li>' % (index, index)
+
+
+if current_page == num_of_pages:
+	print '<li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>'
+else:
+	next_page = current_page + 1
+	print '<li><a href="/index.cgi?page=%s" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>' % next_page
+		    
+print '</ul></div>'
 print '''<form enctype="multipart/form-data" action="upload.cgi" method="POST">
 		<div class="row" id="image-selection">
 			<div class="col-lg-6 col-sm-6 col-12">

@@ -12,6 +12,10 @@ import db
 cgitb.enable()
 form = cgi.FieldStorage()
 
+tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
+# tmpDir = 'openshift_tmp_dir' # Test
+tmpPath = os.path.join(tmpDir, filename + ext)
+
 try: 
     cookieDict = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
 except KeyError: 
@@ -44,10 +48,6 @@ filename = progress[2]
 fn = progress[3]
 ext = progress[4]
 original_fn = fn+ext
-
-# tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-tmpDir = 'openshift_tmp_dir' # Test
-tmpPath = os.path.join(tmpDir, filename + ext)
 
 print "Content-Type: text/html"
 print cookieDict

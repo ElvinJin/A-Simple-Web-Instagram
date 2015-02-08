@@ -26,8 +26,8 @@ fn = progress[3]
 ext = progress[4]
 original_fn = fn+ext
 
-# tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-tmpDir = 'openshift_tmp_dir' # Test
+tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
+# tmpDir = 'openshift_tmp_dir' # Test
 tmpPath1 = os.path.join(tmpDir, filename + ext)
 
 randomFileName = ''.join(random.choice(string.ascii_lowercase) for i in xrange(1,10))

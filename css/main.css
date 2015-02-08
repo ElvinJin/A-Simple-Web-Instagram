@@ -35,18 +35,10 @@
 	max-width: 200px;
 	max-height: 200px;
 	margin: 20px auto;
-	img {
-		border-top: 8px solid $yellow; 
-		@include border-radius(6px);
-	}
-	img:hover {
-		@include box-shadow(rgba(gray, 0.5) 4px 8px 8px);
-	}
+}
 
-	@media #{$small-only} { 
-		width: 80%;
-		margin: 40px auto;
-	}
+.thumbnail:hover {
+    box-shadow: 4px 4px 10px #888888;
 }
 
 .photo-space {

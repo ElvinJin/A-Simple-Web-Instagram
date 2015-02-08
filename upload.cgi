@@ -12,6 +12,9 @@ import db
 import Cookie
 import time
 
+tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
+# tmpDir = 'openshift_tmp_dir' # Test
+
 def discard(sid):
 	allProgress = db.get_progress(sid)
 	if allProgress != None:
@@ -27,8 +30,6 @@ def discard(sid):
 cgitb.enable()
 form = cgi.FieldStorage()
 
-# tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-tmpDir = 'openshift_tmp_dir' # Test
 
 print "Content-Type: text/html"
 if ('pic' not in form):

@@ -13,11 +13,11 @@ form = cgi.FieldStorage()
 sessionValue = form.getvalue('sid')
 nowTime = time.time()
 
-# tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-tmpDir = 'openshift_tmp_dir' # Test
+tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
+# tmpDir = 'openshift_tmp_dir' # Test
 
-# saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
-saveDir = 'openshift_data_dir' # Test
+saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
+# saveDir = 'openshift_data_dir' # Test
 
 action = form['action'].value
 

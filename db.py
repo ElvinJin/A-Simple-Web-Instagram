@@ -8,10 +8,10 @@ dbUser = os.getenv("OPENSHIFT_MYSQL_DB_USERNAME")
 dbPass = os.getenv("OPENSHIFT_MYSQL_DB_PASSWORD")
 dbName = os.getenv("OPENSHIFT_APP_NAME")
 
-dbHost = "127.0.0.1"
-dbUser = "root"
-dbPass = "root"
-dbName = "csci4140asg1"
+# dbHost = "127.0.0.1"
+# dbUser = "root"
+# dbPass = "root"
+# dbName = "csci4140asg1"
 
 def add_tmp_progress(session_id, modified_time, new_name, original_name, extension):
 	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)

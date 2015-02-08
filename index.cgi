@@ -90,15 +90,18 @@ current_page = int(form.getvalue('page', 1))
 photos = db.get_photo(current_page)
 
 print '<div class="gallery row">'
-for photo in photos:
-	alt_txt = photo[3] + photo[4]
-	ext = photo[4]
-	filename = photo[2]
-	imagePath = os.path.join(saveDir, filename + ext)
-	thumbPath = os.path.join(saveDir, filename + '_thumb' + ext)
-	print '<div class="col-xs-3 photo-space"><a href="%s" target="_blank">' % imagePath
-	print '<img class="thumbnail" alt="%s" src="%s">' % (alt_txt, thumbPath)
-	print '</a></div>'
+if len(photos) == 0:
+	print '<div class="row text-center" id="no-photo-sign"><h1>No photo in the gallery yet</h1></div>'
+else:
+	for photo in photos:
+		alt_txt = photo[3] + photo[4]
+		ext = photo[4]
+		filename = photo[2]
+		imagePath = os.path.join(saveDir, filename + ext)
+		thumbPath = os.path.join(saveDir, filename + '_thumb' + ext)
+		print '<div class="col-xs-3 photo-space"><a href="%s" target="_blank">' % imagePath
+		print '<img class="thumbnail" alt="%s" src="%s">' % (alt_txt, thumbPath)
+		print '</a></div>'
 print '</div>'
 
 print '<div class="row text-center"><ul class="pagination">'

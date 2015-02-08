@@ -10,7 +10,7 @@ import db
 form = cgi.FieldStorage()
 
 saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
-# saveDir = 'openshift_data_dir' # Test
+# saveDir = 'data' # Test
 
 try: 
     cookieDict = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
@@ -97,8 +97,8 @@ else:
 		alt_txt = photo[3] + photo[4]
 		ext = photo[4]
 		filename = photo[2]
-		imagePath = os.path.join(saveDir, filename + ext)
-		thumbPath = os.path.join(saveDir, filename + '_thumb' + ext)
+		imagePath = os.path.join('data', filename + ext)
+		thumbPath = os.path.join('data', filename + '_thumb' + ext)
 		print '<div class="col-xs-3 photo-space"><a href="%s" target="_blank">' % imagePath
 		print '<img class="thumbnail" alt="%s" src="%s">' % (alt_txt, thumbPath)
 		print '</a></div>'

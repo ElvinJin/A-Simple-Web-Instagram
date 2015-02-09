@@ -53,7 +53,10 @@ else:
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
 	identifyResult = out.split()
-	fileFormat = identifyResult[1]
+	try:
+		fileFormat = identifyResult[1]
+	except IndexError:
+		fileFormat = 'NONE'
 	if not ((re.search(".jpg$", fileitem.filename) and fileFormat == "JPEG") or (re.search(".png$", fileitem.filename) and fileFormat == "PNG") or (re.search(".gif$", fileitem.filename) and fileFormat == "GIF")):
 		os.remove(tmpPath)
 		print "Status: 301 No file selected"

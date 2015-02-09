@@ -38,7 +38,11 @@ num_of_pages = (num_of_rows + 7) / 8
 if num_of_pages == 0:
 	num_of_pages = 1
 
-current_page = int(form.getvalue('page', 1))
+try:
+	current_page = int(form.getvalue('page', 1))
+except ValueError:
+	current_page = 1
+	
 if current_page < 1 or current_page > num_of_pages:
 	print "Content-Type: text/html"
 	print "Status: 301"

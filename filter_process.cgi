@@ -125,6 +125,7 @@ elif action == 'Annotate Top':
 		print "Status: 302"
 		print "Location: /editor.cgi?fn=%s&original_fn=%s&err=empty_msg" % (filename, original_fn)
 		print
+		return
 
 	font = form.getvalue('font')
 	if (not font) or font == "Please select":
@@ -143,6 +144,7 @@ elif action == 'Annotate Bottom':
 		print "Status: 302"
 		print "Location: /editor.cgi?fn=%s&original_fn=%s&err=empty_msg" % (filename, original_fn)
 		print
+		return
 
 	font = form.getvalue('font')
 	if (not font) or font == "Please select":

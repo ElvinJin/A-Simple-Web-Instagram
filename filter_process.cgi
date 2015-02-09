@@ -120,42 +120,46 @@ elif action == 'Blur':
 	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 elif action == 'Annotate Top':
 	msg = form.getvalue('msg')
+	is_info_valid = True
 	if (not msg) or msg == '':
 		print "Content-Type: text/html"
 		print "Status: 302"
 		print "Location: /editor.cgi?fn=%s&original_fn=%s&err=empty_msg" % (filename, original_fn)
 		print
-		return
+		is_info_valid = False
 
-	font = form.getvalue('font')
-	if (not font) or font == "Please select":
-	   font = "Times"
+	if is_info_valid:
+		font = form.getvalue('font')
+		if (not font) or font == "Please select":
+		   font = "Times"
 
-	font_size = form.getvalue('font-size')
-	if (not font_size) or font_size == "Please select":
-	   font_size = "20"
+		font_size = form.getvalue('font-size')
+		if (not font_size) or font_size == "Please select":
+		   font_size = "20"
 
-	add_annotate(tmpPath1, tmpPath2, "top", msg, font, font_size)
-	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
+		add_annotate(tmpPath1, tmpPath2, "top", msg, font, font_size)
+		db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 elif action == 'Annotate Bottom':
 	msg = form.getvalue('msg')
+	is_info_valid = True
 	if (not msg) or msg == '':
 		print "Content-Type: text/html"
 		print "Status: 302"
 		print "Location: /editor.cgi?fn=%s&original_fn=%s&err=empty_msg" % (filename, original_fn)
 		print
-		return
+		is_info_valid = False
 
-	font = form.getvalue('font')
-	if (not font) or font == "Please select":
-	   font = "Times"
+	if is_info_valid:
+		font = form.getvalue('font')
+		if (not font) or font == "Please select":
+		   font = "Times"
 
-	font_size = form.getvalue('font-size')
-	if (not font_size) or font_size == "Please select":
-	   font_size = "20"
+		font_size = form.getvalue('font-size')
+		if (not font_size) or font_size == "Please select":
+		   font_size = "20"
 
-	add_annotate(tmpPath1, tmpPath2, "bottom", msg, font, font_size)
-	db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
+		add_annotate(tmpPath1, tmpPath2, "bottom", msg, font, font_size)
+		db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
 
 print "Content-Type: text/html"
 print "Status: 302"

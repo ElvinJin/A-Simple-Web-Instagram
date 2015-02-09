@@ -124,7 +124,7 @@ elif action == 'Annotate Top':
 	if (not msg) or msg == '':
 		print "Content-Type: text/html"
 		print "Status: 302"
-		print "Location: /editor.cgi?fn=%s&original_fn=%s&err=empty_msg" % (filename, original_fn)
+		print "Location: /editor.cgi?err=empty_msg"
 		print
 		is_info_valid = False
 

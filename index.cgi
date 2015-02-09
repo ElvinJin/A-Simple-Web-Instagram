@@ -33,6 +33,18 @@ else:
 cookieDict['session'] = sessionValue
 cookieDict['session']['expires'] = expireTime
 
+num_of_rows = db.get_number_of_photos()
+num_of_pages = (num_of_rows + 7) / 8
+if num_of_pages == 0:
+	num_of_pages = 1
+
+current_page = int(form.getvalue('page', 1))
+if current_page < 1 or current_page > num_of_pages:
+	print "Content-Type: text/html"
+	print "Status: 301"
+	print "Location: /index.cgi"
+	print
+
 print 'Content-type: text/html'
 print cookieDict
 print
@@ -79,13 +91,6 @@ if db.is_resumable(sessionValue):
 else:
 	print '<button type="button" class="btn btn-info" id="resume" disabled>Resume</button>'
 print '</div></div>'
-
-num_of_rows = db.get_number_of_photos()
-num_of_pages = (num_of_rows + 7) / 8
-if num_of_pages == 0:
-	num_of_pages = 1
-
-current_page = int(form.getvalue('page', 1))
 
 photos = db.get_photo(current_page)
 
@@ -136,6 +141,9 @@ else:
 	print '<li><a href="/index.cgi?page=%s" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>' % next_page
 		    
 print '</ul></div>'
+print '<div class="row text-center"><form action="go_to_page.cgi" method="POST">'
+print 'Page %s of %s | Go to page <input type="number" name="page" min="1" max="%s">' % (current_page, num_of_pages, num_of_pages)
+print '<button type="submit" class="btn btn-sm btn-primary">Go</button></form></div>'
 print '''<form enctype="multipart/form-data" action="upload.cgi" method="POST">
 		<div class="row" id="image-selection">
 			<div class="col-lg-6 col-sm-6 col-12">

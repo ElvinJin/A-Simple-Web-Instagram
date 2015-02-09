@@ -34,7 +34,7 @@
 .thumbnail {
 	max-width: 200px;
 	max-height: 200px;
-	margin: 20px auto;
+	margin: auto;
 }
 
 .thumbnail:hover {
@@ -43,6 +43,7 @@
 
 .photo-space {
 	height: 200px;
+	margin: 20px auto;
 }
 
 #image-selection {

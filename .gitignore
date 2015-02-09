@@ -1,3 +1,3 @@
-openshift_data_dir/
+data/
 openshift_tmp_dir/
 test_images/

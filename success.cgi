@@ -12,11 +12,9 @@ ext = form.getvalue('ext', None)
 
 if not db.finish_successful(fn, ext):
 	print "Status: 301"
-	print "Location: /index.cgi"# no file selected
+	print "Location: /index.cgi"
 	print
-
-imgPath = os.path.join(env.saveDir, fn+ext)
-
+	
 print "Content-Type: text/html"
 print
 
@@ -37,5 +35,5 @@ print '''<div class="col-xs-3"><a href="/index.cgi">
 		</a></div>'''
 print '</div>'
 
-print '<div class="row"><img class="col-xs-12" src="%s" /></div>'% imgPath
+print '<div class="row"><img class="col-xs-12" src="/data/%s" /></div>'% fn+ext
 print '</div></body></html>'

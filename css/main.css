@@ -69,3 +69,15 @@
 #go-back {
 	margin-top: 20px;
 }
+
+#init {
+	height: 500px;
+	padding-top: 230px;
+}
+
+#init-box {
+	border: 1px solid gray;
+	padding: 20px;
+	width: 50%;
+	margin-left: 20%;
+}

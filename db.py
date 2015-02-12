@@ -139,3 +139,45 @@ def finish_successful(fn, ext):
 	else:
 		return True
 
+def get_all_table_name():
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
+	cursor = conn.cursor()
+
+	query = 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=\'%s\' AND TABLE_TYPE=\'BASE TABLE\'' % env.dbName
+	cursor.execute(query)
+	result = cursor.fetchall()
+
+	tableNames = []
+	for record in result:
+		tableNames.append(record[0])
+
+	cursor.close()
+	conn.close()
+
+	return tableNames
+
+def drop_table(table_name):
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
+	cursor = conn.cursor()
+
+	query = 'DROP TABLE %s' % table_name
+	cursor.execute(query)
+
+	cursor.close()
+	conn.close()
+
+def create_table(table_name):
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
+	cursor = conn.cursor()
+
+	query = 'CREATE TABLE `%s` (' % table_name
+	query = query + '''`session_id` int(11) NOT NULL,
+			  `modified_time` double NOT NULL,
+			  `new_name` text NOT NULL,
+			  `original_name` text NOT NULL,
+			  `extension` text NOT NULL
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;'''
+	cursor.execute(query)
+
+	cursor.close()
+	conn.close()

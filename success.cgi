@@ -14,7 +14,7 @@ if not db.finish_successful(fn, ext):
 	print "Status: 301"
 	print "Location: /index.cgi"
 	print
-	
+
 print "Content-Type: text/html"
 print
 
@@ -35,5 +35,5 @@ print '''<div class="col-xs-3"><a href="/index.cgi">
 		</a></div>'''
 print '</div>'
 
-print '<div class="row"><img class="col-xs-12" src="/data/%s" /></div>'% fn+ext
+print '<div class="row"><img class="col-xs-12" src="/data/%s%s" /></div>'% (fn,ext)
 print '</div></body></html>'

@@ -160,9 +160,13 @@ print		    	'''<div class="row panel-selection">
         <div class="page-header"></div>'''
         
 print		'<form method="POST" action="edit_decision.cgi">'
-print			'''<div class="row">
-			    <input class="col-md-3 btn btn-warning dicision-btn" type="submit" name="action" value="Undo" />
-			    <input class="col-md-3 btn btn-danger dicision-btn" type="submit" name="action" value="Discard" />
+print			'<div class="row">'
+currentProgressStack = db.get_progress(sessionValue)
+if len(currentProgressStack) < 2:
+	print '<input class="col-md-3 btn btn-warning dicision-btn" type="submit" name="action" value="Undo" disabled />'
+else:
+	print '<input class="col-md-3 btn btn-warning dicision-btn" type="submit" name="action" value="Undo" />'
+print		    '''<input class="col-md-3 btn btn-danger dicision-btn" type="submit" name="action" value="Discard" />
 			    <input class="col-md-3 btn btn-success dicision-btn" type="submit" name="action" value="Finish" />
 			    </div>
 		  	</form>

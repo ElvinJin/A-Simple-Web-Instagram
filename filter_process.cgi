@@ -108,6 +108,11 @@ def convert_blur(origin, destination):
 def add_annotate(origin, destination, position, message, font, font_size):
 	if font == "Times":
 		font = "Times-Roman"
+
+	message = re.sub('%', '\%', message)
+	message = re.sub('@', '\@', message)
+	message = re.sub('\\', '\\\\', message)
+
 	if position == 'top':
 		cmd = ['convert', origin, '-background', 'black', '-fill', 'white', '-pointsize', font_size, '-font', font, 'label:%s'%message, '+swap', '-gravity', 'center', '-append', destination]
 		p = subprocess.Popen(cmd)

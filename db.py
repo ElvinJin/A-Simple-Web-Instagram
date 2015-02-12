@@ -40,6 +40,8 @@ def get_progress(session_id):
 	cursor.close()
 	conn.close()
 
+	if progress == None:
+		return None
 	if len(progress) == 0:
 		return None
 	sorted_progress = sorted(progress, key=lambda x:x[1], reverse=True)
@@ -114,3 +116,26 @@ def get_photo(page):
 	conn.close()
 
 	return photos
+
+def finish_successful(fn, ext):
+	if fn == None or ext == None:
+		return False
+
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
+	cursor = conn.cursor()
+
+	query = 'SELECT * FROM gallery WHERE new_name=\'%s\' AND extension=\'%s\'' % (fn, ext)
+	cursor.execute(query)
+
+	imageRecord = cursor.fetchall()
+
+	cursor.close()
+	conn.close()
+
+	if imageRecord == None:
+		return False
+	if len(imageRecord) == 0:
+		return False
+	else:
+		return True
+

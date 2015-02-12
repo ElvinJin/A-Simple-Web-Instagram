@@ -1,3 +1,4 @@
 data/
 openshift_tmp_dir/
 test_images/
+*.pyc

@@ -101,5 +101,5 @@ elif action == 'Finish':
 	print "Content-Type: text/html"
 	print cookieDict
 	print
-	print '<html><head><meta http-equiv="refresh" content="0; url=index.cgi"/></head></html>'
+	print '<html><head><meta http-equiv="refresh" content="0; url=success.cgi?fn=%s&ext=%s"/></head></html>' % (newestProgress[2], newestProgress[4])
 

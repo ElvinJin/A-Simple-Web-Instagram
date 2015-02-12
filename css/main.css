@@ -60,3 +60,12 @@
 	padding-top: 200px;
   	border: 1px solid #fbeed5;
 }
+
+#success_title {
+	height: 120px;
+	padding-top: 40px;
+}
+
+#go-back {
+	margin-top: 20px;
+}

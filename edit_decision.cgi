@@ -70,9 +70,15 @@ if action == 'Undo':
 elif action == 'Discard':
 	discard(sessionValue)
 
-	print "Status: 301"
-	print "Location: /index.cgi"
+	expireTimestamp = 0
+	expireTime = time.strftime("%a, %d-%b-%Y %T GMT", time.gmtime(expireTimestamp))
+	cookieDict['session'] = sessionValue
+	cookieDict['session']['expires'] = expireTime
+
+	print "Content-Type: text/html"
+	print cookieDict
 	print
+	print '<html><head><meta http-equiv="refresh" content="0; url=index.cgi"/></head></html>'
 
 elif action == 'Finish':
 

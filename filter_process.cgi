@@ -10,6 +10,7 @@ import db
 import time
 import Cookie
 import env
+import re
 
 cgitb.enable()
 form = cgi.FieldStorage()

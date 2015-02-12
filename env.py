@@ -1,3 +1,4 @@
+import os
 
 tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
 # tmpDir = 'openshift_tmp_dir' # Test

@@ -11,9 +11,7 @@ import shutil
 import db
 import Cookie
 import time
-
-tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-# tmpDir = 'openshift_tmp_dir' # Test
+import env
 
 def discard(sid):
 	allProgress = db.get_progress(sid)
@@ -21,7 +19,7 @@ def discard(sid):
 		db.discard(sid)
 
 		for progress in allProgress:
-			deletePath = os.path.join(tmpDir, progress[2]+progress[4])
+			deletePath = os.path.join(env.tmpDir, progress[2]+progress[4])
 			try:
 				os.remove(deletePath)
 			except OSError:
@@ -45,7 +43,7 @@ else:
 
 	(fn, ext) = os.path.splitext(os.path.basename(fileitem.filename))
 	randomFileName = ''.join(random.choice(string.ascii_lowercase) for i in xrange(1,10))
-	tmpPath = os.path.join(tmpDir, randomFileName + ext)
+	tmpPath = os.path.join(env.tmpDir, randomFileName + ext)
 	open(tmpPath, 'wb').write(fileitem.file.read())
 
 	cmd = ['identify', tmpPath]
@@ -71,16 +69,18 @@ else:
 
 		try: 
 			sessionValue = cookieDict['session'].value
-			discard(sessionValue)
-			db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
-			print "Status: 302"
-			print "Location: /editor.cgi"
-			print
 		except KeyError: 
 			sessionValue = random.randint(0, 100000)
-			discard(sessionValue)
-			db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
-			print "Status: 302"
-			print "Location: /editor.cgi?tmp_id=%s" % sessionValue
-			print
+
+		expireTimestamp = time.time() + 30 * 24 * 60 * 60
+		expireTime = time.strftime("%a, %d-%b-%Y %T GMT", time.gmtime(expireTimestamp))
+		cookieDict['session'] = sessionValue
+		cookieDict['session']['expires'] = expireTime
+
+		discard(sessionValue)
+		db.add_tmp_progress(sessionValue, nowTime, randomFileName, fn, ext)
+
+		print cookieDict
+		print
+		print '<html><head><meta http-equiv="refresh" content="0; url=editor.cgi"/></head></html>'
 

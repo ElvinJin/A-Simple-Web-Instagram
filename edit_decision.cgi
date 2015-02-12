@@ -7,17 +7,34 @@ import db
 import time
 import shutil
 import subprocess
+import Cookie
+import env
 
 cgitb.enable()
 form = cgi.FieldStorage()
-sessionValue = form.getvalue('sid')
+
+try: 
+    cookieDict = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
+except KeyError: 
+    cookieDict = Cookie.SimpleCookie()
+
+try: 
+    sessionValue = cookieDict['session'].value
+except KeyError: 
+    sessionValue = None
+
+if sessionValue == None:
+	print "Status: 301"
+	print "Location: /index.cgi"
+	print
+
+progress = db.get_newest_progress(sessionValue)
+if progress == None:
+	print "Status: 301"
+	print "Location: /index.cgi"
+	print
+
 nowTime = time.time()
-
-tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-# tmpDir = 'openshift_tmp_dir' # Test
-
-saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
-# saveDir = 'openshift_data_dir' # Test
 
 action = form['action'].value
 
@@ -27,15 +44,15 @@ def discard(sid):
 		db.discard(sid)
 
 		for progress in allProgress:
-			deletePath = os.path.join(tmpDir, progress[2]+progress[4])
+			deletePath = os.path.join(env.tmpDir, progress[2]+progress[4])
 			try:
 				os.remove(deletePath)
 			except OSError:
 				pass
 
 def generate_thumbnail(fn, ext):
-	origin_path = os.path.join(saveDir, fn + ext)
-	thumb_path = os.path.join(saveDir, fn + '_thumb' + ext)
+	origin_path = os.path.join(env.saveDir, fn + ext)
+	thumb_path = os.path.join(env.saveDir, fn + '_thumb' + ext)
 	cmd = ['convert', origin_path, '-resize', '200x200', thumb_path]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	(out, err) = p.communicate()
@@ -43,7 +60,7 @@ def generate_thumbnail(fn, ext):
 if action == 'Undo':
 	newestProgress = db.get_newest_progress(sessionValue)
 	db.undo(sessionValue, newestProgress)
-	deletePath = os.path.join(tmpDir, newestProgress[2]+newestProgress[4])
+	deletePath = os.path.join(env.tmpDir, newestProgress[2]+newestProgress[4])
 	os.remove(deletePath)
 
 	print "Status: 301"
@@ -60,8 +77,8 @@ elif action == 'Discard':
 elif action == 'Finish':
 
 	newestProgress = db.get_newest_progress(sessionValue)
-	tmpPath = os.path.join(tmpDir, newestProgress[2] + newestProgress[4])
-	savePath = os.path.join(saveDir, newestProgress[2] + newestProgress[4])
+	tmpPath = os.path.join(env.tmpDir, newestProgress[2] + newestProgress[4])
+	savePath = os.path.join(env.saveDir, newestProgress[2] + newestProgress[4])
 	shutil.move(tmpPath, savePath)
 
 	generate_thumbnail(newestProgress[2], newestProgress[4])
@@ -70,7 +87,13 @@ elif action == 'Finish':
 
 	discard(sessionValue)
 
-	print "Status: 301"
-	print "Location: /index.cgi"
+	expireTimestamp = 0
+	expireTime = time.strftime("%a, %d-%b-%Y %T GMT", time.gmtime(expireTimestamp))
+	cookieDict['session'] = sessionValue
+	cookieDict['session']['expires'] = expireTime
+
+	print "Content-Type: text/html"
+	print cookieDict
 	print
+	print '<html><head><meta http-equiv="refresh" content="0; url=index.cgi"/></head></html>'
 

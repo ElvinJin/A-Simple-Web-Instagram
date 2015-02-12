@@ -2,19 +2,10 @@ import os
 import sys
 import MySQLdb
 import random
-
-dbHost = os.getenv("OPENSHIFT_MYSQL_DB_HOST")
-dbUser = os.getenv("OPENSHIFT_MYSQL_DB_USERNAME")
-dbPass = os.getenv("OPENSHIFT_MYSQL_DB_PASSWORD")
-dbName = os.getenv("OPENSHIFT_APP_NAME")
-
-dbHost = "127.0.0.1"
-dbUser = "root"
-dbPass = "root"
-dbName = "csci4140asg1"
+import env
 
 def add_tmp_progress(session_id, modified_time, new_name, original_name, extension):
-	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
 	cursor = conn.cursor()
 
 	query = 'INSERT INTO tmp_progress(session_id, modified_time, new_name, original_name, extension) VALUES (%s, %s, %s, %s, %s)'
@@ -26,7 +17,7 @@ def add_tmp_progress(session_id, modified_time, new_name, original_name, extensi
 	conn.close()
 
 def finish(session_id, modified_time, new_name, original_name, extension):
-	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
 	cursor = conn.cursor()
 
 	query = 'INSERT INTO gallery(session_id, modified_time, new_name, original_name, extension) VALUES (%s, %s, %s, %s, %s)'
@@ -38,7 +29,7 @@ def finish(session_id, modified_time, new_name, original_name, extension):
 	conn.close()
 
 def get_progress(session_id):
-	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
 	cursor = conn.cursor()
 
 	query = 'SELECT * FROM tmp_progress WHERE session_id=\'%s\'' % session_id
@@ -62,7 +53,7 @@ def get_newest_progress(session_id):
 		return progress[0]
 
 def undo(session_id, newest):
-	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
 	cursor = conn.cursor()
 
 	query = 'DELETE FROM tmp_progress WHERE new_name=\'%s\'' % newest[2]
@@ -74,7 +65,7 @@ def undo(session_id, newest):
 	conn.close()
 
 def discard(session_id):
-	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
 	cursor = conn.cursor()
 
 	query = 'DELETE FROM tmp_progress WHERE session_id=\'%s\'' % session_id
@@ -88,7 +79,7 @@ def discard(session_id):
 def is_resumable(session_id):
 	if session_id == None:
 		return False
-		
+
 	progress = get_progress(session_id)
 	if progress == None:
 		return False
@@ -96,7 +87,7 @@ def is_resumable(session_id):
 		return True
 
 def get_number_of_photos():
-	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
 	cursor = conn.cursor()
 
 	query = 'SELECT COUNT(*) FROM gallery'
@@ -110,7 +101,7 @@ def get_number_of_photos():
 	return num_of_rows
 
 def get_photo(page):
-	conn = MySQLdb.connect(host=dbHost, user=dbUser, passwd=dbPass, db=dbName)
+	conn = MySQLdb.connect(host=env.dbHost, user=env.dbUser, passwd=env.dbPass, db=env.dbName)
 	cursor = conn.cursor()
 
 	offset = (int(page) - 1) * 8

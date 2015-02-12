@@ -8,12 +8,26 @@ import string
 import subprocess
 import db
 import time
+import Cookie
+import env
 
 cgitb.enable()
 form = cgi.FieldStorage()
 
-sessionValue = form.getvalue('sid')
-nowTime = time.time()
+try: 
+    cookieDict = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
+except KeyError: 
+    cookieDict = Cookie.SimpleCookie()
+
+try: 
+    sessionValue = cookieDict['session'].value
+except KeyError: 
+    sessionValue = None
+
+if sessionValue == None:
+	print "Status: 301"
+	print "Location: /index.cgi"
+	print
 
 progress = db.get_newest_progress(sessionValue)
 if progress == None:
@@ -21,17 +35,17 @@ if progress == None:
 	print "Location: /index.cgi"
 	print
 
+nowTime = time.time()
+
 filename = progress[2]
 fn = progress[3]
 ext = progress[4]
 original_fn = fn+ext
 
-tmpDir = os.getenv('OPENSHIFT_TMP_DIR') # Deploy
-# tmpDir = 'openshift_tmp_dir' # Test
-tmpPath1 = os.path.join(tmpDir, filename + ext)
+tmpPath1 = os.path.join(env.tmpDir, filename + ext)
 
 randomFileName = ''.join(random.choice(string.ascii_lowercase) for i in xrange(1,10))
-tmpPath2 = os.path.join(tmpDir, randomFileName + ext)
+tmpPath2 = os.path.join(env.tmpDir, randomFileName + ext)
 
 action = form['action'].value
 

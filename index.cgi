@@ -9,29 +9,18 @@ import db
 
 form = cgi.FieldStorage()
 
-saveDir = os.getenv('OPENSHIFT_DATA_DIR') # Deploy
-# saveDir = 'data' # Test
-
 try: 
     cookieDict = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
 except KeyError: 
-    cookieDict = Cookie.SimpleCookie()
+    cookieDict = None
 
-try: 
-    oldSession = cookieDict['session'].value
-except KeyError: 
-    oldSession = None
+oldSession = None
 
-expireTimestamp = time.time() + 1 * 24 * 60 * 60
-expireTime = time.strftime("%a, %d-%b-%Y %T GMT", time.gmtime(expireTimestamp))
-
-if (oldSession == None): 
-    sessionValue = random.randint(0, 100000)
-else:
-    sessionValue = oldSession
-
-cookieDict['session'] = sessionValue
-cookieDict['session']['expires'] = expireTime
+if cookieDict != None:	
+	try: 
+		oldSession = cookieDict['session'].value
+	except KeyError: 
+		oldSession = None
 
 num_of_rows = db.get_number_of_photos()
 num_of_pages = (num_of_rows + 7) / 8
@@ -50,7 +39,6 @@ if current_page < 1 or current_page > num_of_pages:
 	print
 
 print 'Content-type: text/html'
-print cookieDict
 print
 
 print '<html><head>'
@@ -88,7 +76,7 @@ elif err == '3':
 print '''<div class="row">
     	<h3 class="text-muted col-xs-4" id="web-name">Elvin's Web Instagram</h3>'''
 print '<div class="col-xs-2">'
-if db.is_resumable(sessionValue):
+if db.is_resumable(oldSession):
 	print '''<form action="editor.cgi" method="POST">
 			<button type="submit" class="btn btn-info" id="resume">Resume</button>
 			</form>'''
